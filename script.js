@@ -1,24 +1,5 @@
 // Book data storage
-let books = [
-    {
-        id: 1,
-        title: "The Housemaid",
-        author: "Freida McFadden",
-        rating: 4,
-        month: "2025-01",
-        cover: "",
-        review: "A gripping psychological thriller that kept me guessing until the end. Great plot twists!"
-    },
-    {
-        id: 2,
-        title: "Lessons in Chemistry",
-        author: "Bonnie Garmus",
-        rating: 5,
-        month: "2025-01",
-        cover: "",
-        review: "Brilliant and witty story about a female scientist in the 1960s. Absolutely loved Elizabeth Zott's character."
-    }
-];
+let books = [];
 
 // DOM elements
 const addBookBtn = document.getElementById('add-book-btn');
@@ -31,23 +12,67 @@ const monthFilter = document.getElementById('month-filter');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    clearOldYearData();
-    loadBooksFromStorage();
-    displayBooks();
     setupEventListeners();
+    // Wait for Firebase to be ready
+    setTimeout(() => {
+        setupFirestoreListener();
+    }, 1000);
 });
 
-// Load books from localStorage
-function loadBooksFromStorage() {
-    const savedBooks = localStorage.getItem('bookReviews');
-    if (savedBooks) {
-        books = JSON.parse(savedBooks);
+// Setup Firestore real-time listener
+function setupFirestoreListener() {
+    if (!window.db || !window.firestore) {
+        console.error('Firebase not ready yet');
+        setTimeout(setupFirestoreListener, 500);
+        return;
+    }
+
+    const { collection, onSnapshot, orderBy, query } = window.firestore;
+    const booksCollection = collection(window.db, 'books');
+    const booksQuery = query(booksCollection, orderBy('timestamp', 'desc'));
+
+    // Listen for real-time updates
+    onSnapshot(booksQuery, (snapshot) => {
+        books = [];
+        snapshot.forEach((doc) => {
+            books.push({
+                firestoreId: doc.id,
+                ...doc.data()
+            });
+        });
+        displayBooks();
+    });
+}
+
+// Add book to Firestore
+async function addBookToFirestore(bookData) {
+    try {
+        const { collection, addDoc } = window.firestore;
+        const booksCollection = collection(window.db, 'books');
+        
+        const docRef = await addDoc(booksCollection, {
+            ...bookData,
+            timestamp: new Date()
+        });
+        
+        showMessage('Book added successfully!');
+        return docRef;
+    } catch (error) {
+        console.error('Error adding book:', error);
+        showMessage('Error adding book. Please try again.');
     }
 }
 
-// Save books to localStorage
-function saveBooksToStorage() {
-    localStorage.setItem('bookReviews', JSON.stringify(books));
+// Delete book from Firestore
+async function deleteBookFromFirestore(firestoreId) {
+    try {
+        const { doc, deleteDoc } = window.firestore;
+        await deleteDoc(doc(window.db, 'books', firestoreId));
+        showMessage('Book deleted successfully!');
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        showMessage('Error deleting book. Please try again.');
+    }
 }
 
 // Setup event listeners
@@ -80,12 +105,10 @@ function closeModalHandler() {
 }
 
 // Handle form submission
-function handleAddBook(event) {
+async function handleAddBook(event) {
     event.preventDefault();
     
-    const formData = new FormData(addBookForm);
     const newBook = {
-        id: Date.now(), // Simple ID generation
         title: document.getElementById('book-title').value.trim(),
         author: document.getElementById('book-author').value.trim(),
         rating: parseInt(document.getElementById('book-rating').value),
@@ -94,20 +117,11 @@ function handleAddBook(event) {
         review: document.getElementById('book-review').value.trim()
     };
     
-    // Add book to array
-    books.push(newBook);
-    
-    // Save to localStorage
-    saveBooksToStorage();
-    
-    // Refresh display
-    displayBooks();
+    // Add book to Firestore
+    await addBookToFirestore(newBook);
     
     // Close modal
     closeModalHandler();
-    
-    // Show success message (optional)
-    showMessage('Book added successfully!');
 }
 
 // Display books in grid
@@ -162,7 +176,7 @@ function createBookElement(book) {
     // Add delete functionality (optional)
     bookDiv.addEventListener('dblclick', function() {
         if (confirm('Are you sure you want to delete this book?')) {
-            deleteBook(book.id);
+            deleteBookFromFirestore(book.firestoreId);
         }
     });
     
@@ -184,13 +198,7 @@ function handleFilterChange() {
     displayBooks();
 }
 
-// Delete book function
-function deleteBook(bookId) {
-    books = books.filter(book => book.id !== bookId);
-    saveBooksToStorage();
-    displayBooks();
-    showMessage('Book deleted successfully!');
-}
+// Note: Delete functionality is now handled by deleteBookFromFirestore() function above
 
 // Show message function (simple notification)
 function showMessage(message) {
@@ -239,15 +247,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Clear any stored data from previous years on page load
-function clearOldYearData() {
-    const savedBooks = localStorage.getItem('bookReviews');
-    if (savedBooks) {
-        const parsedBooks = JSON.parse(savedBooks);
-        // Filter out any books not from 2025
-        const books2025 = parsedBooks.filter(book => book.month && book.month.startsWith('2025'));
-        if (books2025.length !== parsedBooks.length) {
-            localStorage.setItem('bookReviews', JSON.stringify(books2025));
-        }
-    }
-}
+// Note: Data is now stored in Firebase Firestore - no local cleanup needed

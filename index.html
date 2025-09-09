@@ -114,6 +114,32 @@
         </div>
     </footer>
 
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAh77QHkPHbs0gU0K92nTYphzRDxjs7tu8",
+            authDomain: "kristabooklist.firebaseapp.com",
+            projectId: "kristabooklist",
+            storageBucket: "kristabooklist.firebasestorage.app",
+            messagingSenderId: "153525950306",
+            appId: "1:153525950306:web:93c23904f3c33a74d2be3b",
+            measurementId: "G-YQQHBQ85B5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make Firebase available globally
+        window.db = db;
+        window.firestore = { collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc };
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
