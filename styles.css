@@ -201,6 +201,46 @@ header {
     opacity: 0.3;
 }
 
+/* Delete button styling */
+.delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    color: #9B9B9B;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+}
+
+.book-item:hover .delete-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.delete-btn:hover {
+    background-color: #FF4444;
+    border-color: #FF4444;
+    color: #FFFFFF;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.3);
+}
+
+.delete-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
 .book-info {
     flex-grow: 1;
     text-align: center;

@@ -163,6 +163,12 @@ function createBookElement(book) {
     bookDiv.innerHTML = `
         <div class="book-cover ${book.cover ? 'has-image' : ''}" ${book.cover ? `style="background-image: url('${book.cover}')"` : ''}>
             ${!book.cover ? 'No Cover' : ''}
+            <button class="delete-btn" onclick="event.stopPropagation(); deleteBook('${book.firestoreId}');" title="Delete book">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 11v6m4-6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
         </div>
         <div class="book-info">
             <div class="book-author">${book.author}</div>
@@ -211,7 +217,12 @@ function handleFilterChange() {
     displayBooks();
 }
 
-// Note: Delete functionality is now handled by deleteBookFromFirestore() function above
+// Delete book with confirmation
+function deleteBook(firestoreId) {
+    if (confirm('Are you sure you want to delete this book? This action cannot be undone.')) {
+        deleteBookFromFirestore(firestoreId);
+    }
+}
 
 // Show message function (simple notification)
 function showMessage(message) {
