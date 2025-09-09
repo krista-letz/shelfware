@@ -111,7 +111,7 @@ async function handleAddBook(event) {
     const newBook = {
         title: document.getElementById('book-title').value.trim(),
         author: document.getElementById('book-author').value.trim(),
-        rating: parseInt(document.getElementById('book-rating').value),
+        rating: parseFloat(document.getElementById('book-rating').value),
         month: document.getElementById('book-month').value,
         cover: document.getElementById('book-cover').value.trim(),
         review: document.getElementById('book-review').value.trim()
@@ -157,7 +157,7 @@ function createBookElement(book) {
     const bookDiv = document.createElement('div');
     bookDiv.className = 'book-item';
     
-    const stars = '⭐'.repeat(book.rating);
+    const stars = getStarDisplay(book.rating);
     const monthName = formatMonth(book.month);
     
     bookDiv.innerHTML = `
@@ -181,6 +181,19 @@ function createBookElement(book) {
     });
     
     return bookDiv;
+}
+
+// Generate star display for ratings (including half stars)
+function getStarDisplay(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = (rating % 1) === 0.5;
+    
+    let starDisplay = '⭐'.repeat(fullStars);
+    if (hasHalfStar) {
+        starDisplay += '💫';
+    }
+    
+    return starDisplay;
 }
 
 // Format month for display
