@@ -34,6 +34,23 @@ header {
     align-items: center;
 }
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.book-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover .book-icon {
+    transform: rotate(-2deg) scale(1.05);
+}
+
 .logo {
     font-size: 1.75rem;
     font-weight: 500;
@@ -41,6 +58,7 @@ header {
     text-decoration: none;
     letter-spacing: -0.02em;
     text-transform: lowercase;
+    margin: 0;
 }
 
 .nav-links {
@@ -342,6 +360,19 @@ footer {
 @media (max-width: 768px) {
     .nav-container {
         padding: 0 1rem;
+    }
+    
+    .logo-container {
+        gap: 0.5rem;
+    }
+    
+    .book-icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
     }
 
     .container {
