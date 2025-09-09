@@ -253,9 +253,15 @@ style.textContent = `
     .no-books {
         grid-column: 1 / -1;
         text-align: center;
-        color: #666;
+        color: #B8B8B8;
         font-style: italic;
-        padding: 2rem;
+        padding: 3rem;
+        font-size: 1.1rem;
+        font-weight: 300;
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        border: 1px solid #F0F0F0;
+        margin: 1rem 0;
     }
 `;
 document.head.appendChild(style);
