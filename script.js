@@ -160,6 +160,9 @@ function createBookElement(book) {
     const stars = getStarDisplay(book.rating);
     const monthName = formatMonth(book.month);
     
+    // Generate catalog number based on timestamp or order
+    const catalogNumber = generateCatalogNumber(book);
+    
     bookDiv.innerHTML = `
         <div class="book-cover ${book.cover ? 'has-image' : ''}" ${book.cover ? `style="background-image: url('${book.cover}')"` : ''}>
             ${!book.cover ? 'No Cover' : ''}
@@ -170,13 +173,9 @@ function createBookElement(book) {
                 </svg>
             </button>
         </div>
-        <div class="book-info">
-            <div class="book-author">${book.author}</div>
-            <div class="book-title">${book.title}</div>
-            <div class="book-rating">${stars} (${book.rating}/5)</div>
-            <div class="book-month">${monthName}</div>
-            ${book.review ? `<div class="book-review">"${book.review}"</div>` : ''}
-        </div>
+        <div class="book-catalog">${catalogNumber}</div>
+        <div class="book-author">${book.author}</div>
+        <div class="book-title">${book.title}</div>
     `;
     
     // Add delete functionality (optional)
@@ -200,6 +199,14 @@ function getStarDisplay(rating) {
     }
     
     return starDisplay;
+}
+
+// Generate Library Science-style catalog number
+function generateCatalogNumber(book) {
+    // Create a simple numbering system based on the book's index in the array
+    const index = books.findIndex(b => b.firestoreId === book.firestoreId);
+    const catalogNum = String(index + 1).padStart(3, '0');
+    return `SW#${catalogNum}`;
 }
 
 // Format month for display

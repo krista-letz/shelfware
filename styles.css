@@ -131,74 +131,60 @@ header {
 /* Books grid */
 .books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 2.5rem 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 3rem 2rem;
     margin-bottom: 4rem;
-    padding: 1rem 0;
+    padding: 2rem 0;
 }
 
 .book-item {
     display: flex;
     flex-direction: column;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(107, 107, 107, 0.08);
+    transition: opacity 0.3s ease;
 }
 
 .book-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(107, 107, 107, 0.15);
+    opacity: 0.8;
 }
 
 .book-cover {
     width: 100%;
-    height: 320px;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E5;
-    margin-bottom: 1.25rem;
+    height: 300px;
+    background-color: #F5F5F5;
+    margin-bottom: 0.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    color: #B8B8B8;
+    font-size: 0.7rem;
+    color: #D6D6D6;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 6px;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .book-cover.has-image {
     color: transparent;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.book-cover.has-image:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Fallback cover styling */
 .book-cover:not(.has-image) {
-    background: linear-gradient(135deg, #F8F8F8 0%, #F0F0F0 100%);
+    background-color: #F8F8F8;
     text-align: center;
     padding: 1rem;
 }
 
 .book-cover:not(.has-image)::before {
     content: "📖";
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
     display: block;
-    opacity: 0.3;
+    opacity: 0.2;
 }
 
 /* Delete button styling */
@@ -241,59 +227,30 @@ header {
     height: 14px;
 }
 
-.book-info {
-    flex-grow: 1;
-    text-align: center;
+/* Library Science-style typography */
+.book-catalog {
+    font-size: 0.75rem;
+    color: #B8B8B8;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.05em;
 }
 
 .book-author {
-    font-size: 0.8rem;
-    color: #B8B8B8;
-    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    color: #9B9B9B;
     font-weight: 400;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+    line-height: 1.3;
 }
 
 .book-title {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #6B6B6B;
+    color: #333333;
     margin-bottom: 0.5rem;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    min-height: 2.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.book-rating {
-    font-size: 0.8rem;
-    margin-bottom: 0.3rem;
-    color: #9B9B9B;
-}
-
-.book-month {
-    font-size: 0.7rem;
-    color: #D6D6D6;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
-}
-
-.book-review {
-    font-size: 0.75rem;
-    color: #9B9B9B;
-    font-style: italic;
-    line-height: 1.4;
-    font-weight: 300;
-    max-height: 3.2rem;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
 }
 
 /* Modal styles */
@@ -462,23 +419,26 @@ footer {
     }
 
     .books-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1.5rem;
-        padding: 0.5rem 0;
-    }
-
-    .book-item {
-        padding: 0.75rem;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 2rem 1.5rem;
+        padding: 1rem 0;
     }
 
     .book-cover {
-        height: 260px;
-        margin-bottom: 1rem;
+        height: 240px;
+        margin-bottom: 0.5rem;
     }
 
     .book-title {
-        font-size: 0.9rem;
-        min-height: 2.2rem;
+        font-size: 0.8rem;
+    }
+
+    .book-author {
+        font-size: 0.75rem;
+    }
+
+    .book-catalog {
+        font-size: 0.7rem;
     }
 
     .modal-content {
@@ -495,25 +455,25 @@ footer {
 @media (max-width: 480px) {
     .books-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    .book-item {
-        padding: 0.5rem;
+        gap: 1.5rem 1rem;
+        padding: 0.5rem 0;
     }
 
     .book-cover {
-        height: 220px;
-        margin-bottom: 0.75rem;
+        height: 200px;
+        margin-bottom: 0.5rem;
     }
 
     .book-title {
-        font-size: 0.85rem;
-        min-height: 2rem;
+        font-size: 0.75rem;
     }
 
     .book-author {
         font-size: 0.7rem;
+    }
+
+    .book-catalog {
+        font-size: 0.65rem;
     }
 
     .form-buttons {
