@@ -308,6 +308,9 @@ function createBookElement(book) {
         openBookDetails(book);
     });
     
+    // Add mobile swipe gestures
+    addSwipeGestures(bookDiv, book);
+    
     return bookDiv;
 }
 
@@ -512,6 +515,161 @@ function getStatusDisplay(status) {
 
 function getStatusClass(status) {
     return `status-${status}`;
+}
+
+// Mobile Swipe Gesture Functions
+function addSwipeGestures(element, book) {
+    let startX = null;
+    let startY = null;
+    let isSwiping = false;
+    let swipeDirection = null;
+    
+    // Touch start
+    element.addEventListener('touchstart', function(e) {
+        // Only handle single touch
+        if (e.touches.length !== 1) return;
+        
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        isSwiping = false;
+        swipeDirection = null;
+        
+        // Add swipe indicator
+        element.classList.add('touch-active');
+    }, { passive: true });
+    
+    // Touch move
+    element.addEventListener('touchmove', function(e) {
+        if (!startX || !startY) return;
+        if (e.touches.length !== 1) return;
+        
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+        
+        // Determine if this is a horizontal swipe
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
+            isSwiping = true;
+            swipeDirection = deltaX > 0 ? 'right' : 'left';
+            
+            // Prevent scrolling during horizontal swipe
+            e.preventDefault();
+            
+            // Add visual feedback
+            const swipeAmount = Math.min(Math.abs(deltaX), 80);
+            const opacity = swipeAmount / 80;
+            
+            if (swipeDirection === 'left') {
+                // Show delete action
+                element.style.transform = `translateX(${Math.max(deltaX, -80)}px)`;
+                element.classList.add('swiping-left');
+                element.classList.remove('swiping-right');
+                showSwipeAction(element, 'delete', opacity);
+            } else {
+                // Show edit action
+                element.style.transform = `translateX(${Math.min(deltaX, 80)}px)`;
+                element.classList.add('swiping-right');
+                element.classList.remove('swiping-left');
+                showSwipeAction(element, 'edit', opacity);
+            }
+        }
+    }, { passive: false });
+    
+    // Touch end
+    element.addEventListener('touchend', function(e) {
+        if (!startX || !startY) return;
+        
+        element.classList.remove('touch-active');
+        
+        if (isSwiping && swipeDirection) {
+            const deltaX = Math.abs(startX - (e.changedTouches[0]?.clientX || startX));
+            
+            // If swipe was significant enough, trigger action
+            if (deltaX > 60) {
+                if (swipeDirection === 'left') {
+                    // Trigger delete
+                    triggerSwipeAction(element, 'delete', book);
+                } else {
+                    // Trigger edit
+                    triggerSwipeAction(element, 'edit', book);
+                }
+            } else {
+                // Reset position
+                resetSwipeState(element);
+            }
+        } else {
+            resetSwipeState(element);
+        }
+        
+        // Reset values
+        startX = null;
+        startY = null;
+        isSwiping = false;
+        swipeDirection = null;
+    }, { passive: true });
+    
+    // Touch cancel
+    element.addEventListener('touchcancel', function() {
+        resetSwipeState(element);
+        startX = null;
+        startY = null;
+        isSwiping = false;
+        swipeDirection = null;
+    }, { passive: true });
+}
+
+function showSwipeAction(element, action, opacity) {
+    // Remove existing action indicators
+    element.querySelectorAll('.swipe-action-indicator').forEach(el => el.remove());
+    
+    const indicator = document.createElement('div');
+    indicator.className = `swipe-action-indicator ${action}-indicator`;
+    indicator.style.opacity = opacity;
+    
+    if (action === 'delete') {
+        indicator.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 11v6m4-6v6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        `;
+        indicator.style.right = '10px';
+        indicator.style.backgroundColor = '#FF4444';
+    } else {
+        indicator.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        indicator.style.left = '10px';
+        indicator.style.backgroundColor = '#9FA67A';
+    }
+    
+    element.appendChild(indicator);
+}
+
+function triggerSwipeAction(element, action, book) {
+    // Add completion animation
+    element.style.transform = action === 'delete' ? 'translateX(-100%)' : 'translateX(100%)';
+    element.style.opacity = '0.5';
+    
+    setTimeout(() => {
+        if (action === 'delete') {
+            deleteBook(book.firestoreId);
+        } else {
+            editBook(book.firestoreId);
+        }
+        resetSwipeState(element);
+    }, 200);
+}
+
+function resetSwipeState(element) {
+    element.style.transform = '';
+    element.style.opacity = '';
+    element.classList.remove('swiping-left', 'swiping-right', 'touch-active');
+    element.querySelectorAll('.swipe-action-indicator').forEach(el => el.remove());
 }
 
 // Add CSS for message animation and new features
