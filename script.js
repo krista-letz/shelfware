@@ -13,8 +13,12 @@ const cancelBtn = document.getElementById('cancel-btn');
 const addBookForm = document.getElementById('add-book-form');
 const booksGrid = document.getElementById('books-grid');
 const monthFilter = document.getElementById('month-filter');
+const statusFilter = document.getElementById('status-filter');
 const searchInput = document.getElementById('search-input');
 const clearSearchBtn = document.getElementById('clear-search');
+const themeToggle = document.getElementById('theme-toggle');
+const bookDetailsModal = document.getElementById('book-details-modal');
+const bookDetailsClose = document.querySelector('.book-details-close');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -106,13 +110,22 @@ function setupEventListeners() {
     cancelBtn.addEventListener('click', closeModalHandler);
     addBookForm.addEventListener('submit', handleAddBook);
     monthFilter.addEventListener('change', handleFilterChange);
+    statusFilter.addEventListener('change', handleFilterChange);
     searchInput.addEventListener('input', handleSearchInput);
     clearSearchBtn.addEventListener('click', clearSearch);
+    themeToggle.addEventListener('click', toggleTheme);
+    bookDetailsClose.addEventListener('click', closeBookDetails);
+    
+    // Initialize dark mode
+    initializeDarkMode();
     
     // Close modal when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target === addBookModal) {
             closeModalHandler();
+        }
+        if (event.target === bookDetailsModal) {
+            closeBookDetails();
         }
     });
 }
@@ -147,6 +160,7 @@ function populateForm(bookData) {
     document.getElementById('book-author').value = bookData.author || '';
     document.getElementById('book-rating').value = bookData.rating || '';
     document.getElementById('book-genre').value = bookData.genre || '';
+    document.getElementById('book-status').value = bookData.status || '';
     document.getElementById('book-month').value = bookData.month || '';
     document.getElementById('book-cover').value = bookData.cover || '';
     document.getElementById('book-review').value = bookData.review || '';
@@ -171,6 +185,7 @@ async function handleAddBook(event) {
         author: document.getElementById('book-author').value.trim(),
         rating: parseFloat(document.getElementById('book-rating').value),
         genre: document.getElementById('book-genre').value,
+        status: document.getElementById('book-status').value,
         month: document.getElementById('book-month').value,
         cover: document.getElementById('book-cover').value.trim(),
         review: document.getElementById('book-review').value.trim()
@@ -193,17 +208,18 @@ function displayBooks() {
     const filteredBooks = getFilteredBooks();
     const searchQuery = searchInput.value.toLowerCase().trim();
     const selectedMonth = monthFilter.value;
+    const selectedStatus = statusFilter.value;
     
     booksGrid.innerHTML = '';
     
     if (filteredBooks.length === 0) {
         let message = 'No books found';
-        if (searchQuery && selectedMonth !== 'all') {
-            message += ` for "${searchQuery}" in the selected month.`;
+        if (searchQuery && (selectedMonth !== 'all' || selectedStatus !== 'all')) {
+            message += ` for "${searchQuery}" with selected filters.`;
         } else if (searchQuery) {
             message += ` matching "${searchQuery}".`;
-        } else if (selectedMonth !== 'all') {
-            message += ' for the selected month.';
+        } else if (selectedMonth !== 'all' || selectedStatus !== 'all') {
+            message += ' with selected filters.';
         } else {
             message += '. Start building your library by adding your first book!';
         }
@@ -217,9 +233,10 @@ function displayBooks() {
     });
 }
 
-// Get filtered books based on month selection and search query
+// Get filtered books based on month selection, status, and search query
 function getFilteredBooks() {
     const selectedMonth = monthFilter.value;
+    const selectedStatus = statusFilter.value;
     const searchQuery = searchInput.value.toLowerCase().trim();
     
     let filteredBooks = books;
@@ -227,6 +244,11 @@ function getFilteredBooks() {
     // Filter by month if not 'all'
     if (selectedMonth !== 'all') {
         filteredBooks = filteredBooks.filter(book => book.month === selectedMonth);
+    }
+    
+    // Filter by status if not 'all'
+    if (selectedStatus !== 'all') {
+        filteredBooks = filteredBooks.filter(book => book.status === selectedStatus);
     }
     
     // Filter by search query if provided
@@ -273,14 +295,17 @@ function createBookElement(book) {
         <div class="book-catalog">${catalogNumber}</div>
         <div class="book-author">${book.author}</div>
         <div class="book-genre">${book.genre || 'Genre not specified'}</div>
+        <div class="book-status-badge ${getStatusClass(book.status)}">${getStatusDisplay(book.status)}</div>
         <div class="book-title">${book.title}</div>
     `;
     
-    // Add delete functionality (optional)
-    bookDiv.addEventListener('dblclick', function() {
-        if (confirm('Are you sure you want to delete this book?')) {
-            deleteBookFromFirestore(book.firestoreId);
+    // Make book clickable to open details modal
+    bookDiv.addEventListener('click', function(event) {
+        // Don't open details if clicking on action buttons
+        if (event.target.closest('.book-actions')) {
+            return;
         }
+        openBookDetails(book);
     });
     
     return bookDiv;
@@ -375,7 +400,121 @@ function showMessage(message) {
     }, 3000);
 }
 
-// Add CSS for message animation
+// Dark Mode Functions
+function initializeDarkMode() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
+    updateThemeIcon();
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+}
+
+function updateThemeIcon() {
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    const isDark = document.body.classList.contains('dark-theme');
+    
+    if (isDark) {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+    } else {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+    }
+}
+
+// Book Details Modal Functions
+function openBookDetails(book) {
+    const modalContent = document.getElementById('book-details-content');
+    const stars = getStarDisplay(book.rating);
+    const monthName = formatMonth(book.month);
+    
+    modalContent.innerHTML = `
+        <div class="book-details-layout">
+            <div class="book-details-cover">
+                <div class="book-cover-large ${book.cover ? 'has-image' : ''}" ${book.cover ? `style="background-image: url('${book.cover}')"` : ''}>
+                    ${!book.cover ? '📖<br>No Cover' : ''}
+                </div>
+            </div>
+            <div class="book-details-info">
+                <div class="book-details-header">
+                    <h2 class="book-details-title">${book.title}</h2>
+                    <p class="book-details-author">by ${book.author}</p>
+                </div>
+                
+                <div class="book-details-meta">
+                    <div class="meta-item">
+                        <strong>Genre:</strong> ${book.genre || 'Not specified'}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Status:</strong> <span class="status-display ${getStatusClass(book.status)}">${getStatusDisplay(book.status)}</span>
+                    </div>
+                    <div class="meta-item">
+                        <strong>Rating:</strong> <span class="rating-display">${stars} (${book.rating}/5)</span>
+                    </div>
+                    <div class="meta-item">
+                        <strong>Month Read:</strong> ${monthName}
+                    </div>
+                </div>
+                
+                ${book.review ? `
+                    <div class="book-details-review">
+                        <h3>My Review</h3>
+                        <p>${book.review}</p>
+                    </div>
+                ` : ''}
+                
+                <div class="book-details-actions">
+                    <button class="details-edit-btn" onclick="editBook('${book.firestoreId}'); closeBookDetails();">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Edit Book
+                    </button>
+                    <button class="details-delete-btn" onclick="deleteBook('${book.firestoreId}'); closeBookDetails();">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10 11v6m4-6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Delete Book
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    bookDetailsModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeBookDetails() {
+    bookDetailsModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Status helper functions
+function getStatusDisplay(status) {
+    const statusMap = {
+        'want-to-read': '📚 Want to Read',
+        'currently-reading': '📖 Currently Reading',
+        'finished': '✅ Finished'
+    };
+    return statusMap[status] || 'Unknown Status';
+}
+
+function getStatusClass(status) {
+    return `status-${status}`;
+}
+
+// Add CSS for message animation and new features
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
