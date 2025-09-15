@@ -118,6 +118,71 @@ header {
     padding: 2rem;
 }
 
+/* Global lowercase text except for specific elements */
+body, .nav-link, .book-title, .modal h2, 
+.form-group label, .form-buttons button, .add-book-btn, .book-details-title, 
+.meta-item strong, .about-content p,
+.about-content strong, .features h3, input::placeholder, 
+select, option {
+    text-transform: lowercase;
+}
+
+/* Reset author text to normal case */
+.book-author, .book-details-author {
+    text-transform: none !important;
+}
+
+/* Hover Details */
+.book-hover-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    color: white;
+    padding: 1rem 0.75rem 0.75rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.book-item:hover .book-hover-details {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.book-hover-details > div {
+    margin-bottom: 0.25rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+.hover-author {
+    font-weight: 500;
+    text-transform: none !important;
+}
+
+.hover-genre {
+    color: #C1C69A;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.hover-rating {
+    font-size: 0.8rem;
+}
+
+.hover-status {
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 0.25rem;
+}
+
 .add-book-section {
     margin-bottom: 2rem;
 }
@@ -242,7 +307,7 @@ header {
 /* Books grid */
 .books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 3rem 2rem;
     margin-bottom: 4rem;
     padding: 2rem 0;
@@ -266,6 +331,11 @@ header {
 .book-item:hover .book-cover {
     box-shadow: 0 4px 16px rgba(159, 166, 122, 0.12), 
                 0 2px 8px rgba(159, 166, 122, 0.16);
+    border: 2px solid rgba(159, 166, 122, 0.3);
+}
+
+.book-item:hover .book-title {
+    color: #9FA67A;
 }
 
 /* Mobile Touch States */
@@ -362,7 +432,7 @@ header {
 
 .book-cover {
     width: 100%;
-    height: 300px;
+    height: 360px;
     background-color: #F5F5F5;
     margin-bottom: 0.75rem;
     display: flex;
@@ -456,66 +526,32 @@ header {
     height: 14px;
 }
 
-/* Library Science-style typography */
-.book-catalog {
-    font-size: 0.75rem;
-    color: #B8B8B8;
-    font-weight: 400;
-    margin-bottom: 0.25rem;
-    letter-spacing: 0.05em;
-}
-
-.book-author {
-    font-size: 0.85rem;
-    color: #9B9B9B;
-    font-weight: 400;
-    margin-bottom: 0.1rem;
-    line-height: 1.3;
-}
-
-.book-genre {
-    font-size: 0.75rem;
-    color: #9FA67A;
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-    line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
+/* Simplified book typography - only title shown by default */
 
 .book-title {
     font-size: 0.9rem;
     font-weight: 600;
     color: #333333;
     margin-bottom: 0.5rem;
-    line-height: 1.3;
+    line-height: 1.2;
     letter-spacing: -0.01em;
-}
-
-/* Reading Status Badges */
-.book-status-badge {
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    margin-bottom: 0.25rem;
-    display: inline-block;
     text-align: center;
 }
 
+/* Reading Status - Now in hover details only */
 .status-want-to-read {
-    background-color: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    background-color: rgba(184, 192, 138, 0.3);
+    color: #B8C08A;
 }
 
 .status-currently-reading {
-    background-color: rgba(251, 191, 36, 0.1);
-    color: #f59e0b;
+    background-color: rgba(159, 166, 122, 0.3);
+    color: #9FA67A;
 }
 
 .status-finished {
-    background-color: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
+    background-color: rgba(139, 146, 101, 0.3);
+    color: #8B9265;
 }
 
 /* Modal styles */
@@ -773,8 +809,8 @@ header {
 }
 
 .book-cover-large {
-    width: 200px;
-    height: 300px;
+    width: 240px;
+    height: 360px;
     background-color: #F5F5F5;
     display: flex;
     align-items: center;
@@ -967,13 +1003,13 @@ footer {
     }
 
     .books-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 2rem 1.5rem;
         padding: 1rem 0;
     }
 
     .book-cover {
-        height: 240px;
+        height: 280px;
         margin-bottom: 0.5rem;
     }
 
@@ -1019,13 +1055,13 @@ footer {
 @media (max-width: 480px) {
     /* Compact Grid for Small Screens */
     .books-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 1.25rem 0.75rem;
         padding: 0.75rem 0;
     }
 
     .book-cover {
-        height: 180px;
+        height: 220px;
         margin-bottom: 0.5rem;
     }
 
@@ -1328,17 +1364,17 @@ footer {
 }
 
 .dark-theme .status-want-to-read {
-    background-color: rgba(59, 130, 246, 0.2);
-    color: #60a5fa;
+    background-color: rgba(184, 192, 138, 0.2);
+    color: #C1C69A;
 }
 
 .dark-theme .status-currently-reading {
-    background-color: rgba(251, 191, 36, 0.2);
-    color: #fbbf24;
+    background-color: rgba(159, 166, 122, 0.2);
+    color: #B8C08A;
 }
 
 .dark-theme .status-finished {
-    background-color: rgba(34, 197, 94, 0.2);
-    color: #4ade80;
+    background-color: rgba(139, 146, 101, 0.2);
+    color: #9FA67A;
 }
 }

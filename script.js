@@ -271,9 +271,6 @@ function createBookElement(book) {
     const stars = getStarDisplay(book.rating);
     const monthName = formatMonth(book.month);
     
-    // Generate catalog number based on timestamp or order
-    const catalogNumber = generateCatalogNumber(book);
-    
     bookDiv.innerHTML = `
         <div class="book-cover ${book.cover ? 'has-image' : ''}" ${book.cover ? `style="background-image: url('${book.cover}')"` : ''}>
             ${!book.cover ? 'No Cover' : ''}
@@ -291,11 +288,13 @@ function createBookElement(book) {
                     </svg>
                 </button>
             </div>
+            <div class="book-hover-details">
+                <div class="hover-author">${book.author}</div>
+                <div class="hover-genre">${book.genre || 'Genre not specified'}</div>
+                <div class="hover-rating">${stars}</div>
+                <div class="hover-status ${getStatusClass(book.status)}">${getStatusDisplay(book.status)}</div>
+            </div>
         </div>
-        <div class="book-catalog">${catalogNumber}</div>
-        <div class="book-author">${book.author}</div>
-        <div class="book-genre">${book.genre || 'Genre not specified'}</div>
-        <div class="book-status-badge ${getStatusClass(book.status)}">${getStatusDisplay(book.status)}</div>
         <div class="book-title">${book.title}</div>
     `;
     
@@ -327,13 +326,6 @@ function getStarDisplay(rating) {
     return starDisplay;
 }
 
-// Generate Library Science-style catalog number
-function generateCatalogNumber(book) {
-    // Create a simple numbering system based on the book's index in the array
-    const index = books.findIndex(b => b.firestoreId === book.firestoreId);
-    const catalogNum = String(index + 1).padStart(3, '0');
-    return `SW#${catalogNum}`;
-}
 
 // Format month for display
 function formatMonth(monthStr) {
@@ -380,19 +372,21 @@ function deleteBook(firestoreId) {
     }
 }
 
-// Show message function (simple notification)
+// Show message function (green-themed notification)
 function showMessage(message) {
     const messageDiv = document.createElement('div');
     messageDiv.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: #000;
+        background-color: #9FA67A;
         color: white;
         padding: 1rem 1.5rem;
-        border-radius: 4px;
+        border-radius: 8px;
         z-index: 1001;
         animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 12px rgba(159, 166, 122, 0.3);
+        font-weight: 500;
     `;
     messageDiv.textContent = message;
     
@@ -506,11 +500,11 @@ function closeBookDetails() {
 // Status helper functions
 function getStatusDisplay(status) {
     const statusMap = {
-        'want-to-read': '📚 Want to Read',
-        'currently-reading': '📖 Currently Reading',
-        'finished': '✅ Finished'
+        'want-to-read': 'want to read',
+        'currently-reading': 'currently reading',
+        'finished': 'finished'
     };
-    return statusMap[status] || 'Unknown Status';
+    return statusMap[status] || 'unknown status';
 }
 
 function getStatusClass(status) {
