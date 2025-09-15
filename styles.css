@@ -725,6 +725,7 @@ select, option {
     font-weight: 500;
     color: #9FA67A;
     font-size: 0.9rem;
+    text-transform: none !important;
 }
 
 .about-content p {
@@ -939,6 +940,7 @@ select, option {
 .about-page .quote cite {
     font-size: 0.85rem;
     margin-top: 0.75rem;
+    text-transform: none !important;
 }
 
 /* Responsive adjustments */
