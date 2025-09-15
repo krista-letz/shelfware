@@ -711,23 +711,10 @@ select, option {
 }
 
 .quote {
-    background-color: rgba(159, 166, 122, 0.05);
-    border-left: 4px solid #9FA67A;
-    padding: 1.5rem;
+    padding: 1.5rem 0;
     margin: 2rem 0;
-    border-radius: 0 8px 8px 0;
     font-style: italic;
     position: relative;
-}
-
-.quote::before {
-    content: '"';
-    font-size: 4rem;
-    color: rgba(159, 166, 122, 0.3);
-    position: absolute;
-    top: -0.5rem;
-    left: 0.5rem;
-    font-family: Georgia, serif;
 }
 
 .quote cite {
@@ -946,7 +933,7 @@ select, option {
     font-size: 1.1rem;
     line-height: 1.5;
     margin: 0;
-    padding: 2rem 1.5rem;
+    padding: 2rem 1rem;
 }
 
 .about-page .quote cite {
@@ -964,7 +951,7 @@ select, option {
     
     .about-page .quote {
         font-size: 1rem;
-        padding: 1.5rem 1rem;
+        padding: 1.5rem 0.5rem;
     }
 }
 
@@ -1349,9 +1336,6 @@ footer {
     color: #9FA67A;
 }
 
-.dark-theme .quote {
-    background-color: rgba(159, 166, 122, 0.1);
-}
 
 .dark-theme .features {
     background-color: #2a2a2a;
