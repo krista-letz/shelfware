@@ -51,14 +51,14 @@ header {
     transform: rotate(-2deg) scale(1.05);
 }
 
-.logo {
-    font-size: 1.75rem;
-    font-weight: 500;
-    color: #9FA67A;
-    text-decoration: none;
-    letter-spacing: -0.02em;
-    text-transform: lowercase;
-    margin: 0;
+.logo-image {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover .logo-image {
+    transform: scale(1.05);
 }
 
 .nav-links {
@@ -983,8 +983,8 @@ footer {
         height: 24px;
     }
     
-    .logo {
-        font-size: 1.5rem;
+    .logo-image {
+        height: 36px;
     }
 
     .container {
@@ -1137,8 +1137,8 @@ footer {
         padding: 0 0.75rem;
     }
 
-    .logo {
-        font-size: 1.25rem;
+    .logo-image {
+        height: 32px;
     }
 
     .nav-links {
