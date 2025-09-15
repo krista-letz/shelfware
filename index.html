@@ -13,17 +13,17 @@
                 <div class="logo-container">
                     <svg class="book-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <!-- Book spine -->
-                        <path d="M4 3H12C12.5523 3 13 3.44772 13 4V20C13 20.5523 12.5523 21 12 21H4V3Z" fill="#6B6B6B"/>
+                        <path d="M4 3H12C12.5523 3 13 3.44772 13 4V20C13 20.5523 12.5523 21 12 21H4V3Z" fill="#9FA67A"/>
                         <!-- Fanned pages -->
-                        <path d="M13 4L19 2V18L13 20V4Z" fill="#B8B8B8" opacity="0.8"/>
-                        <path d="M15 3L20 1.5V17.5L15 19V3Z" fill="#D6D6D6" opacity="0.6"/>
-                        <path d="M17 2.5L21 1.2V17.2L17 18.5V2.5Z" fill="#E5E5E5" opacity="0.4"/>
+                        <path d="M13 4L19 2V18L13 20V4Z" fill="#B0B68A" opacity="0.8"/>
+                        <path d="M15 3L20 1.5V17.5L15 19V3Z" fill="#C1C69A" opacity="0.6"/>
+                        <path d="M17 2.5L21 1.2V17.2L17 18.5V2.5Z" fill="#D2D6AA" opacity="0.4"/>
                     </svg>
                     <h1 class="logo">shelfware</h1>
                 </div>
                 <div class="nav-links">
-                    <a href="#" class="nav-link">Books</a>
-                    <a href="#" class="nav-link">About</a>
+                    <a href="index.html" class="nav-link">Books</a>
+                    <a href="about.html" class="nav-link">About</a>
                 </div>
             </div>
         </nav>
@@ -35,22 +35,39 @@
                 <button id="add-book-btn" class="add-book-btn">+ Add New Book</button>
             </div>
 
-            <div class="filter-section">
-                <select id="month-filter">
-                    <option value="all">All Months</option>
-                    <option value="2025-01">January 2025</option>
-                    <option value="2025-02">February 2025</option>
-                    <option value="2025-03">March 2025</option>
-                    <option value="2025-04">April 2025</option>
-                    <option value="2025-05">May 2025</option>
-                    <option value="2025-06">June 2025</option>
-                    <option value="2025-07">July 2025</option>
-                    <option value="2025-08">August 2025</option>
-                    <option value="2025-09">September 2025</option>
-                    <option value="2025-10">October 2025</option>
-                    <option value="2025-11">November 2025</option>
-                    <option value="2025-12">December 2025</option>
-                </select>
+            <div class="search-and-filter-section">
+                <div class="search-section">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11" cy="11" r="8" stroke="#9FA67A" stroke-width="2"/>
+                            <path d="m21 21-4.35-4.35" stroke="#9FA67A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search books by title, author, or genre..." />
+                        <button type="button" id="clear-search" class="clear-search-btn" style="display: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <select id="month-filter">
+                        <option value="all">All Months</option>
+                        <option value="2025-01">January 2025</option>
+                        <option value="2025-02">February 2025</option>
+                        <option value="2025-03">March 2025</option>
+                        <option value="2025-04">April 2025</option>
+                        <option value="2025-05">May 2025</option>
+                        <option value="2025-06">June 2025</option>
+                        <option value="2025-07">July 2025</option>
+                        <option value="2025-08">August 2025</option>
+                        <option value="2025-09">September 2025</option>
+                        <option value="2025-10">October 2025</option>
+                        <option value="2025-11">November 2025</option>
+                        <option value="2025-12">December 2025</option>
+                    </select>
+                </div>
             </div>
 
             <div class="books-grid" id="books-grid">
@@ -87,6 +104,33 @@
                         <option value="1.5">⭐💫 (1.5/5)</option>
                         <option value="1">⭐ (1/5)</option>
                         <option value="0.5">💫 (0.5/5)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="book-genre">Genre:</label>
+                    <select id="book-genre" required>
+                        <option value="">Select genre</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Science Fiction">Science Fiction</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Historical Fiction">Historical Fiction</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Memoir">Memoir</option>
+                        <option value="Self-Help">Self-Help</option>
+                        <option value="Business">Business</option>
+                        <option value="Health & Fitness">Health & Fitness</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Cooking">Cooking</option>
+                        <option value="Art & Design">Art & Design</option>
+                        <option value="History">History</option>
+                        <option value="Science">Science</option>
+                        <option value="Philosophy">Philosophy</option>
+                        <option value="Poetry">Poetry</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -133,7 +177,7 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
         
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -152,7 +196,7 @@
 
         // Make Firebase available globally
         window.db = db;
-        window.firestore = { collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc };
+        window.firestore = { collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, deleteDoc, updateDoc };
     </script>
     
     <script src="script.js"></script>
