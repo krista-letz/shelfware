@@ -23,35 +23,62 @@ const bookDetailsClose = document.querySelector('.book-details-close');
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
-    // Wait for Firebase to be ready
-    setTimeout(() => {
-        setupFirestoreListener();
-    }, 1000);
+    // Wait for Firebase to be ready with retry logic
+    waitForFirebase();
 });
+
+// Wait for Firebase to be initialized with retry
+function waitForFirebase() {
+    let attempts = 0;
+    const maxAttempts = 20;
+    
+    function checkFirebase() {
+        if (window.db && window.firestore) {
+            console.log('Firebase is ready, setting up listener...');
+            setupFirestoreListener();
+        } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(checkFirebase, 200);
+        } else {
+            console.error('Firebase failed to initialize after multiple attempts');
+            showMessage('Failed to connect to database. Please refresh the page.');
+        }
+    }
+    
+    checkFirebase();
+}
 
 // Setup Firestore real-time listener
 function setupFirestoreListener() {
     if (!window.db || !window.firestore) {
         console.error('Firebase not ready yet');
-        setTimeout(setupFirestoreListener, 500);
         return;
     }
 
-    const { collection, onSnapshot, orderBy, query, doc, updateDoc } = window.firestore;
-    const booksCollection = collection(window.db, 'books');
-    const booksQuery = query(booksCollection, orderBy('timestamp', 'desc'));
+    try {
+        const { collection, onSnapshot, orderBy, query } = window.firestore;
+        const booksCollection = collection(window.db, 'books');
+        const booksQuery = query(booksCollection, orderBy('timestamp', 'desc'));
 
-    // Listen for real-time updates
-    onSnapshot(booksQuery, (snapshot) => {
-        books = [];
-        snapshot.forEach((doc) => {
-            books.push({
-                firestoreId: doc.id,
-                ...doc.data()
+        // Listen for real-time updates
+        onSnapshot(booksQuery, (snapshot) => {
+            console.log(`Loaded ${snapshot.size} books from Firestore`);
+            books = [];
+            snapshot.forEach((doc) => {
+                books.push({
+                    firestoreId: doc.id,
+                    ...doc.data()
+                });
             });
+            displayBooks();
+        }, (error) => {
+            console.error('Error fetching books:', error);
+            showMessage('Error loading books. Please refresh the page.');
         });
-        displayBooks();
-    });
+    } catch (error) {
+        console.error('Error setting up Firestore listener:', error);
+        showMessage('Error connecting to database. Please refresh the page.');
+    }
 }
 
 // Add book to Firestore
